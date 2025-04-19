@@ -11,14 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.guessinggame.databinding.ActivityMainBinding
+import kotlin.properties.Delegates
 import kotlin.random.Random
 import kotlin.random.nextInt
 
 class MainActivity : AppCompatActivity() {
 
-    private var groupNumber = 0
-    private var randomNumbers = mutableSetOf<Int>()
-
+    private var currentLevel = 1
+    private var currentScore = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,64 +29,162 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val level:TextView = findViewById(R.id.tv_level)
-        val guessedNumber:EditText = findViewById(R.id.et_guessed)
-        val gameQuestion:TextView = findViewById(R.id.textview_question)
-        val guessedButton:Button = findViewById(R.id.btn_guessing)
-        val scored:TextView = findViewById(R.id.tv_score)
+        val level: TextView = findViewById(R.id.tv_level)
+        val guessedNumber: EditText = findViewById(R.id.et_guessed)
+        val gameQuestion: TextView = findViewById(R.id.textview_question)
+        val guessedButton: Button = findViewById(R.id.btn_guessing)
+        val scored: TextView = findViewById(R.id.tv_score)
+        val levels = level.text.toString()
+        //val score = scored.text.toString()
 
+        var currentLevel = levels.toInt()
+
+
+        fun generate(first:Int,last:Int):Int{
+
+            val random = Random.nextInt(first,last)
+            return random
+        }
+       fun modify(){
+            /* val point = score.toInt() + 1
+            scored.text = point.toString()
+            val lev = levels.toInt() + 1
+            level.text = lev.toString()
+            currentLevel = lev
+             */
+
+           level.text = currentLevel.toString()
+           scored.text = currentScore.toString()
+        }
+
+
+
+        @SuppressLint("SetTextI18n")
+        fun questioned(){
+            when(currentLevel){
+                1 ->{
+                    gameQuestion.text = "Guess the number between 1 and 10"
+                }
+                2 -> {
+                    gameQuestion.text = "Guess the generate number between 11 to 20"
+                }
+                3 -> {
+                    gameQuestion.text = "Guess the generate number between 21 to 30"
+                }
+                4 -> {
+                    gameQuestion.text = "Guess the generate number between 31 to 50"
+                }
+                5 -> {
+                    gameQuestion.text = "Guess the generate number between 51 to 100"
+                }
+
+                6 -> {
+                    gameQuestion.text = "Congratulations You Win"
+                }
+                else -> {
+                    gameQuestion.text = "Game Over!"
+                }
+            }
+        }
+
+        fun validate(inputNumber:Int,demoNumber:Int){
+                if (inputNumber == demoNumber){
+                    Toast.makeText(this,"Congratulations you got it correct",Toast.LENGTH_LONG).show()
+                    guessedNumber.text.clear()
+
+                }else {
+                    Toast.makeText(this,"Try again!",Toast.LENGTH_LONG).show()
+                    guessedNumber.text.clear()
+                }
+
+            }
 
         guessedButton.setOnClickListener {
 
-            fun generate(start:Int,stop:Int):Int{
-
-                return Random.nextInt(start,stop)
-            }
 
             fun guessing(){
+                val number = guessedNumber.text.toString()
+                val demo:Int
+                val randomNumber:Int
 
-                val lev = level.text.toString()
 
-                var question: String
-                val score = scored.text.toString()
-                var scores:Int = score.toInt()
-                var progres = lev.toInt()
-                var start = 0
-                var stop = 10
-                val random = generate(start,stop)
-                var chance = 0
+                if (number.trim().isNotEmpty()){
+                    //Toast.makeText(this,"You have entered a number",Toast.LENGTH_LONG).show()
+                    when(currentLevel){
+                        1 -> {
+                            randomNumber = generate(1,10)
+                            demo = 5
+                            var num = number.toInt()
+                            validate(num,demo)
+                            currentLevel += 1
+                            currentScore += 1
+                            modify()
+                            questioned()
 
-                val num = guessedNumber.text.toString().trim()
+                        }
+                        2 -> {
+                            randomNumber = generate(11,20)
+                            demo = 15
+                            val num = number.toInt()
+                            validate(num,demo)
+                            currentLevel += 1
+                            currentScore += 1
+                            modify()
+                            questioned()
+                        }
+                        3 -> {
+                            randomNumber = generate(21, 30)
+                            demo = 27
+                            val num = number.toInt()
+                            validate(num, demo)
+                            currentLevel += 1
+                            currentScore += 1
+                            modify()
+                            questioned()
 
-                do {
-                    chance ++
-                    if(num.isNotEmpty()){
-                        guessedNumber.text.clear()
-                        if (num.toInt() == random){
-                            Toast.makeText(this,"Congratulations you got the answer correct",Toast.LENGTH_LONG).show()
-                            progres += 1
-                            scores += 1
-                            start += 10
-                            stop += 10
-                            question = "Guess the generated number between {$start} to {$stop}"
-                            gameQuestion.text = question
-                            continue
-
-                        }else{
-                            Toast.makeText(this,"Wrong!!,Try again",Toast.LENGTH_LONG).show()
-                            continue
+                        }
+                        4 -> {
+                            randomNumber = generate(21, 30)
+                            demo = 35
+                            val num = number.toInt()
+                            validate(num, demo)
+                            currentLevel += 1
+                            currentScore += 1
+                            modify()
+                            questioned()
+                        }
+                        5 -> {
+                            randomNumber = generate(21, 30)
+                            demo = 65
+                            val num = number.toInt()
+                            validate(num, demo)
+                            currentLevel += 1
+                            currentScore += 1
+                            modify()
+                            questioned()
+                        }
+                        6 -> {
+                            currentScore += 1
+                            modify()
+                            questioned()
+                        }
+                        else -> {
+                            Toast.makeText(this,"Invalid Level",Toast.LENGTH_LONG).show()
                         }
 
-                    }else{
-                        Toast.makeText(this,"Please enter a number",Toast.LENGTH_LONG).show()
+
                     }
-                }while (chance <= 5)
+
+                }else {
+                   Toast.makeText(this,"Guess a number!",Toast.LENGTH_LONG).show()
+                }
 
             }
             guessing()
+
         }
 
     }
-
 }
+
 
