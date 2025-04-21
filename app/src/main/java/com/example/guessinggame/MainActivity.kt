@@ -1,6 +1,7 @@
 package com.example.guessinggame
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         //val score = scored.text.toString()
 
         var currentLevel = levels.toInt()
+        var randomNumber:Int
 
 
         fun generate(first:Int,last:Int):Int{
@@ -63,33 +65,40 @@ class MainActivity : AppCompatActivity() {
         fun questioned(){
             when(currentLevel){
                 1 ->{
-                    gameQuestion.text = "Guess the number between 1 and 10"
+                    "Guess the number between 1 and 10".also { gameQuestion.text = it }
                 }
                 2 -> {
-                    gameQuestion.text = "Guess the generate number between 11 to 20"
+                    "Guess the generate number between 11 to 20".also { gameQuestion.text = it }
                 }
                 3 -> {
-                    gameQuestion.text = "Guess the generate number between 21 to 30"
+                    "Guess the generate number between 21 to 30".also { gameQuestion.text = it }
                 }
                 4 -> {
-                    gameQuestion.text = "Guess the generate number between 31 to 50"
+                    "Guess the generate number between 31 to 50".also { gameQuestion.text = it }
                 }
                 5 -> {
-                    gameQuestion.text = "Guess the generate number between 51 to 100"
+                    "Guess the generate number between 51 to 100".also { gameQuestion.text = it }
                 }
 
                 6 -> {
-                    gameQuestion.text = "Congratulations You Win"
+                    val intent = Intent(this,Winning::class.java)
+                    intent.putExtra("totalScore",scored.text)
+                    startActivity(intent)
+                    finish()
                 }
                 else -> {
-                    gameQuestion.text = "Game Over!"
+                    "Game Over!".also { gameQuestion.text = it }
                 }
             }
         }
 
-        fun validate(inputNumber:Int,demoNumber:Int){
-                if (inputNumber == demoNumber){
+        fun validate(inputNumber:Int,randomGenerated:Int){
+                if (inputNumber == randomGenerated){
                     Toast.makeText(this,"Congratulations you got it correct",Toast.LENGTH_LONG).show()
+                    currentLevel += 1
+                    currentScore += 1
+                    modify()
+                    questioned()
                     guessedNumber.text.clear()
 
                 }else {
@@ -104,8 +113,7 @@ class MainActivity : AppCompatActivity() {
 
             fun guessing(){
                 val number = guessedNumber.text.toString()
-                val demo:Int
-                val randomNumber:Int
+
 
 
                 if (number.trim().isNotEmpty()){
@@ -113,60 +121,39 @@ class MainActivity : AppCompatActivity() {
                     when(currentLevel){
                         1 -> {
                             randomNumber = generate(1,10)
-                            demo = 5
-                            var num = number.toInt()
-                            validate(num,demo)
-                            currentLevel += 1
-                            currentScore += 1
-                            modify()
-                            questioned()
+                            val num = number.toInt()
+                            validate(num,randomNumber)
+
 
                         }
                         2 -> {
                             randomNumber = generate(11,20)
-                            demo = 15
                             val num = number.toInt()
-                            validate(num,demo)
-                            currentLevel += 1
-                            currentScore += 1
-                            modify()
-                            questioned()
+                            validate(num,randomNumber)
+
                         }
                         3 -> {
                             randomNumber = generate(21, 30)
-                            demo = 27
                             val num = number.toInt()
-                            validate(num, demo)
-                            currentLevel += 1
-                            currentScore += 1
-                            modify()
-                            questioned()
+                            validate(num, randomNumber)
+
 
                         }
                         4 -> {
-                            randomNumber = generate(21, 30)
-                            demo = 35
+                            randomNumber = generate(31, 50)
                             val num = number.toInt()
-                            validate(num, demo)
-                            currentLevel += 1
-                            currentScore += 1
-                            modify()
-                            questioned()
+                            validate(num, randomNumber)
+
                         }
                         5 -> {
-                            randomNumber = generate(21, 30)
-                            demo = 65
+                            randomNumber = generate(51, 100)
                             val num = number.toInt()
-                            validate(num, demo)
-                            currentLevel += 1
-                            currentScore += 1
-                            modify()
-                            questioned()
+                            validate(num, randomNumber)
+
                         }
                         6 -> {
                             currentScore += 1
-                            modify()
-                            questioned()
+
                         }
                         else -> {
                             Toast.makeText(this,"Invalid Level",Toast.LENGTH_LONG).show()
